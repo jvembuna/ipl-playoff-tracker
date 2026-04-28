@@ -1,0 +1,34 @@
+{
+  "source_name": "fixture_sample",
+  "refreshed_at": "2026-04-28T18:30:00+00:00",
+  "notes": [
+    "This is a local fallback snapshot for development.",
+    "Live refresh can replace this when network parsing succeeds."
+  ],
+  "standings": [
+    {"team_id": "PBKS", "team_name": "PBKS", "played": 8, "won": 6, "lost": 1, "no_result": 1, "points": 13, "net_run_rate": 1.043},
+    {"team_id": "RCB", "team_name": "RCB", "played": 8, "won": 6, "lost": 2, "no_result": 0, "points": 12, "net_run_rate": 1.919},
+    {"team_id": "RR", "team_name": "RR", "played": 9, "won": 6, "lost": 3, "no_result": 0, "points": 12, "net_run_rate": 0.617},
+    {"team_id": "GT", "team_name": "GT", "played": 8, "won": 5, "lost": 3, "no_result": 0, "points": 10, "net_run_rate": 0.281},
+    {"team_id": "SRH", "team_name": "SRH", "played": 8, "won": 5, "lost": 3, "no_result": 0, "points": 10, "net_run_rate": 0.104},
+    {"team_id": "DC", "team_name": "DC", "played": 8, "won": 4, "lost": 4, "no_result": 0, "points": 8, "net_run_rate": -0.117},
+    {"team_id": "KKR", "team_name": "KKR", "played": 8, "won": 3, "lost": 4, "no_result": 1, "points": 7, "net_run_rate": -0.041},
+    {"team_id": "MI", "team_name": "MI", "played": 8, "won": 3, "lost": 5, "no_result": 0, "points": 6, "net_run_rate": -0.201},
+    {"team_id": "LSG", "team_name": "LSG", "played": 8, "won": 3, "lost": 5, "no_result": 0, "points": 6, "net_run_rate": -0.512},
+    {"team_id": "CSK", "team_name": "CSK", "played": 9, "won": 2, "lost": 7, "no_result": 0, "points": 4, "net_run_rate": -1.207}
+  ],
+  "full_fixture_list": [
+    {"match_id": "match_041", "team_a": "MI", "team_b": "SRH", "status": "upcoming"},
+    {"match_id": "match_042", "team_a": "GT", "team_b": "RCB", "status": "upcoming"},
+    {"match_id": "match_043", "team_a": "RR", "team_b": "DC", "status": "upcoming"},
+    {"match_id": "match_044", "team_a": "LSG", "team_b": "CSK", "status": "upcoming"},
+    {"match_id": "match_045", "team_a": "KKR", "team_b": "GT", "status": "upcoming"},
+    {"match_id": "match_046", "team_a": "PBKS", "team_b": "GT", "status": "upcoming"},
+    {"match_id": "match_047", "team_a": "SRH", "team_b": "RR", "status": "upcoming"},
+    {"match_id": "match_048", "team_a": "MI", "team_b": "DC", "status": "upcoming"},
+    {"match_id": "match_049", "team_a": "PBKS", "team_b": "SRH", "status": "upcoming"},
+    {"match_id": "match_050", "team_a": "LSG", "team_b": "RCB", "status": "upcoming"},
+    {"match_id": "match_051", "team_a": "CSK", "team_b": "KKR", "status": "upcoming"},
+    {"match_id": "match_052", "team_a": "MI", "team_b": "RR", "status": "upcoming"}
+  ]
+}

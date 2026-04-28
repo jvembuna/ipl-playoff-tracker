@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IPL 2026 Qualification Probability</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero-card">
+        <div>
+          <p class="eyebrow">IPL 2026 Playoff Tracker</p>
+          <h1>Qualification probability without the spreadsheet gymnastics.</h1>
+          <p class="hero-copy">
+            Refresh the latest standings snapshot, adjust each remaining match from the default
+            50/50 split, and run a Monte Carlo simulation to see who looks playoff-bound.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="refresh-button" class="button button-secondary">Refresh IPL Data</button>
+          <button id="simulate-button" class="button button-primary">Run Simulation</button>
+        </div>
+      </section>
+
+      <section class="status-strip">
+        <div>
+          <span class="status-label">Data Source</span>
+          <strong id="source-name">Loading...</strong>
+        </div>
+        <div>
+          <span class="status-label">Last Refresh</span>
+          <strong id="refresh-time">Loading...</strong>
+        </div>
+        <div>
+          <span class="status-label">Simulation Count</span>
+          <strong>
+            <input id="simulation-count" type="number" min="1" value="{{ default_simulations }}">
+            <span class="simulation-hint">max {{ max_simulations }}</span>
+          </strong>
+        </div>
+      </section>
+
+      <section id="message-bar" class="message-bar" hidden></section>
+
+      <section class="layout-grid">
+        <article class="panel standings-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Standings</p>
+              <h2>Current table and qualification outlook</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Team</th>
+                  <th>Pld</th>
+                  <th>Pts</th>
+                  <th>NRR</th>
+                  <th>Chance</th>
+                </tr>
+              </thead>
+              <tbody id="standings-body"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel controls-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Remaining Matches</p>
+              <h2>Match-by-match probability controls</h2>
+            </div>
+          </div>
+          <div id="matches-list" class="matches-list"></div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      window.APP_CONFIG = {
+        defaultSimulations: {{ default_simulations|tojson }},
+        maxSimulations: {{ max_simulations|tojson }}
+      };
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </body>
+  </html>
