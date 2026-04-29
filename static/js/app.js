@@ -8,6 +8,24 @@ const standingsBody = document.getElementById("standings-body");
 const matchesList = document.getElementById("matches-list");
 const simulationCountInput = document.getElementById("simulation-count");
 const simulateButton = document.getElementById("simulate-button");
+const historyLegend = document.getElementById("history-legend");
+const historyCanvas = document.getElementById("history-chart");
+
+const TEAM_COLORS = {
+  PBKS: "#d44a2a",
+  RCB: "#caa13d",
+  RR: "#2f61c2",
+  SRH: "#d85b19",
+  GT: "#2f365f",
+  CSK: "#f0b11b",
+  DC: "#294f95",
+  KKR: "#5b3a7d",
+  MI: "#3567b7",
+  LSG: "#1f8e87",
+};
+
+let historyChart = null;
+let highlightedTeamId = null;
 
 async function requestJson(url, options = {}) {
   const response = await fetch(url, {
@@ -25,8 +43,36 @@ function percent(value) {
   return `${Number(value).toFixed(1)}%`;
 }
 
+function compactDateLabel(value) {
+  const [year, month, day] = String(value).split("-");
+  if (!year || !month || !day) {
+    return value;
+  }
+  return `${Number(month)}/${Number(day)}`;
+}
+
 function currentQualification(teamId) {
   return state.qualificationPercentages?.[teamId] ?? 0;
+}
+
+function chartHistoryEntries() {
+  const history = [...(state.appState?.qualification_history || [])];
+  if (!state.appState || !state.qualificationPercentages) {
+    return history;
+  }
+
+  const currentEntry = {
+    date: state.appState.refreshed_at,
+    simulation_count: Number(simulationCountInput.value || window.APP_CONFIG.defaultSimulations),
+    qualification_percentages: state.qualificationPercentages,
+  };
+
+  const alreadyPresent = history.some((entry) => entry.date === currentEntry.date);
+  if (!alreadyPresent) {
+    history.push(currentEntry);
+  }
+
+  return history;
 }
 
 function renderStandings() {
@@ -131,6 +177,7 @@ function renderMatches() {
 function renderState() {
   renderStandings();
   renderMatches();
+  renderHistoryChart();
 }
 
 async function loadState() {
@@ -142,6 +189,91 @@ async function loadState() {
     );
   }
   renderState();
+}
+
+function buildHistorySeries() {
+  const history = chartHistoryEntries();
+  const labels = history.map((entry) => compactDateLabel(entry.date));
+  const teamIds = state.appState?.standings.map((row) => row.team_id) || [];
+  const datasets = teamIds.map((teamId) => {
+    const isHighlighted = highlightedTeamId === teamId;
+    const isMuted = highlightedTeamId && highlightedTeamId !== teamId;
+    const baseColor = TEAM_COLORS[teamId] || "#5f6b7b";
+    return {
+      label: teamId,
+      data: history.map((entry) => entry.qualification_percentages[teamId] ?? null),
+      borderColor: isMuted ? "rgba(95, 107, 123, 0.25)" : baseColor,
+      backgroundColor: isMuted ? "rgba(95, 107, 123, 0.15)" : baseColor,
+      borderWidth: isHighlighted ? 4 : 2,
+      tension: 0.25,
+      pointRadius: history.length <= 1 ? 5 : isHighlighted ? 4 : 2,
+      pointHoverRadius: history.length <= 1 ? 6 : isHighlighted ? 5 : 3,
+    };
+  });
+  return { labels, datasets };
+}
+
+function renderHistoryLegend() {
+  const teamIds = state.appState?.standings.map((row) => row.team_id) || [];
+  historyLegend.innerHTML = teamIds
+    .map((teamId) => {
+      const muted = highlightedTeamId && highlightedTeamId !== teamId ? "is-muted" : "";
+      const swatchColor = TEAM_COLORS[teamId] || "#5f6b7b";
+      return `
+        <button type="button" class="${muted}" data-team-id="${teamId}">
+          <span class="legend-swatch" style="background:${swatchColor}"></span>
+          <span>${teamId}</span>
+        </button>
+      `;
+    })
+    .join("");
+
+  historyLegend.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextTeamId = button.dataset.teamId;
+      highlightedTeamId = highlightedTeamId === nextTeamId ? null : nextTeamId;
+      renderHistoryChart();
+    });
+  });
+}
+
+function renderHistoryChart() {
+  if (!state.appState || !window.Chart) {
+    return;
+  }
+
+  const { labels, datasets } = buildHistorySeries();
+  renderHistoryLegend();
+
+  if (historyChart) {
+    historyChart.destroy();
+  }
+
+  historyChart = new window.Chart(historyCanvas, {
+    type: "line",
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { mode: "index", intersect: false },
+      },
+      interaction: {
+        mode: "nearest",
+        intersect: false,
+      },
+      scales: {
+        y: {
+          min: 0,
+          max: 100,
+          ticks: {
+            callback: (value) => `${value}%`,
+          },
+        },
+      },
+    },
+  });
 }
 
 async function runSimulation({ silent = false } = {}) {

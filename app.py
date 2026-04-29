@@ -6,21 +6,47 @@ from typing import Any
 from flask import Flask, jsonify, render_template, request
 
 from ipl_data.fixture_provider import FixtureStateProvider
+from ipl_data.history_store import QualificationHistoryStore
 from ipl_data.service import IPLDataService
 from ipl_data.state_store import InMemoryStateStore
 from simulation.engine import MonteCarloSimulator
 
 
+def env_flag(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.lower() in {"1", "true", "yes", "on"}
+
+
 def create_app() -> Flask:
     app = Flask(__name__)
+    app.config["APP_ENV"] = os.getenv("APP_ENV", "development")
     app.config["DEFAULT_SIMULATIONS"] = int(os.getenv("DEFAULT_SIMULATIONS", "10000"))
     app.config["MAX_SIMULATIONS"] = int(os.getenv("MAX_SIMULATIONS", "50000"))
+    app.config["ENABLE_HISTORY_PERSIST"] = env_flag(
+        "ENABLE_HISTORY_PERSIST",
+        False,
+    )
 
     state_store = InMemoryStateStore()
     fixture_provider = FixtureStateProvider()
+    history_store = QualificationHistoryStore(fixture_provider=fixture_provider)
     simulator = MonteCarloSimulator()
 
     initial_state = fixture_provider.load_state()
+    if app.config["ENABLE_HISTORY_PERSIST"] and app.config["APP_ENV"] == "development":
+        baseline_result = simulator.run(
+            standings=initial_state.standings,
+            remaining_matches=initial_state.remaining_matches,
+            match_probabilities={},
+            simulation_count=app.config["DEFAULT_SIMULATIONS"],
+        )
+        initial_state = history_store.maybe_record_daily_snapshot(
+            state=initial_state,
+            qualification_percentages=baseline_result.qualification_percentages,
+            simulation_count=app.config["DEFAULT_SIMULATIONS"],
+        )
     state_store.set_state(initial_state)
 
     data_service = IPLDataService(state_store=state_store)

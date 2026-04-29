@@ -29,3 +29,4 @@ def test_state_endpoint_returns_seeded_state() -> None:
     payload = response.get_json()
     assert payload["status"] == "ok"
     assert payload["state"]["standings"]
+    assert "qualification_history" in payload["state"]

@@ -40,9 +40,27 @@ class Match:
 
 
 @dataclass(frozen=True)
+class QualificationHistoryEntry:
+    date: str
+    simulation_count: int
+    qualification_percentages: dict[str, float]
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "date": self.date,
+            "simulation_count": self.simulation_count,
+            "qualification_percentages": {
+                team_id: round(value, 1)
+                for team_id, value in self.qualification_percentages.items()
+            },
+        }
+
+
+@dataclass(frozen=True)
 class AppState:
     standings: list[StandingRow]
     remaining_matches: list[Match]
+    qualification_history: list[QualificationHistoryEntry]
     source_name: str
     refreshed_at: str
     notes: list[str] = field(default_factory=list)
@@ -51,6 +69,7 @@ class AppState:
         return {
             "standings": [row.to_dict() for row in self.standings],
             "remaining_matches": [match.to_dict() for match in self.remaining_matches],
+            "qualification_history": [entry.to_dict() for entry in self.qualification_history],
             "source_name": self.source_name,
             "refreshed_at": self.refreshed_at,
             "notes": self.notes,

@@ -1,0 +1,6 @@
+{
+  "qualification_history": [
+    {"date": "2026-04-28", "simulation_count": 10000, "qualification_percentages": {"PBKS": 94.1, "RR": 85.8, "RCB": 90.6, "SRH": 75.5, "GT": 27.4, "DC": 7.1, "CSK": 6.1, "KKR": 6.1, "MI": 5.9, "LSG": 1.4}},
+    {"date": "2026-04-29", "simulation_count": 10000, "qualification_percentages": {"PBKS": 93.0, "SRH": 91.6, "RR": 84.4, "RCB": 88.9, "GT": 22.2, "DC": 5.3, "CSK": 4.5, "KKR": 4.5, "MI": 4.2, "LSG": 1.3}}
+  ]
+}

@@ -44,6 +44,16 @@
               <tbody id="standings-body"></tbody>
             </table>
           </div>
+          <section class="history-section">
+            <div class="history-header">
+              <h3>Qualification Chance History</h3>
+              <p class="history-note">Each day is calculated using 50/50 win chances from that day's table and fixtures.</p>
+            </div>
+            <div class="history-chart-wrap">
+              <canvas id="history-chart" aria-label="Qualification chance history line chart"></canvas>
+            </div>
+            <div id="history-legend" class="history-legend"></div>
+          </section>
         </article>
 
         <article class="panel controls-panel">
@@ -63,6 +73,7 @@
         maxSimulations: {{ max_simulations|tojson }}
       };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
   </body>
   </html>
