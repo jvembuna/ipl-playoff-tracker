@@ -18,12 +18,12 @@ def create_app() -> Flask:
 
     state_store = InMemoryStateStore()
     fixture_provider = FixtureStateProvider()
-    data_service = IPLDataService(state_store=state_store, fixture_provider=fixture_provider)
     simulator = MonteCarloSimulator()
 
     initial_state = fixture_provider.load_state()
     state_store.set_state(initial_state)
 
+    data_service = IPLDataService(state_store=state_store)
     app.extensions["data_service"] = data_service
     app.extensions["simulator"] = simulator
 
