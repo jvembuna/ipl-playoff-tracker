@@ -107,6 +107,7 @@ function renderStandings() {
           <td>${row.played}</td>
           <td>${row.won}</td>
           <td>${row.lost}</td>
+          <td>${row.no_result}</td>
           <td>${row.points}</td>
           <td>
             <div class="chance-wrap">
