@@ -6,11 +6,7 @@ const state = {
 
 const standingsBody = document.getElementById("standings-body");
 const matchesList = document.getElementById("matches-list");
-const sourceName = document.getElementById("source-name");
-const refreshTime = document.getElementById("refresh-time");
-const messageBar = document.getElementById("message-bar");
 const simulationCountInput = document.getElementById("simulation-count");
-const refreshButton = document.getElementById("refresh-button");
 const simulateButton = document.getElementById("simulate-button");
 
 async function requestJson(url, options = {}) {
@@ -25,25 +21,8 @@ async function requestJson(url, options = {}) {
   return payload;
 }
 
-function showMessage(message, isError = false) {
-  messageBar.hidden = false;
-  messageBar.textContent = message;
-  messageBar.style.color = isError ? "#8a1d1d" : "#10304f";
-  messageBar.style.borderColor = isError ? "rgba(138, 29, 29, 0.18)" : "rgba(16, 48, 79, 0.12)";
-}
-
-function clearMessage() {
-  messageBar.hidden = true;
-  messageBar.textContent = "";
-}
-
 function percent(value) {
   return `${Number(value).toFixed(1)}%`;
-}
-
-function formatRefreshTime(value) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
 }
 
 function currentQualification(teamId) {
@@ -65,9 +44,6 @@ function renderStandings() {
     if (b.points !== a.points) {
       return b.points - a.points;
     }
-    if (b.net_run_rate !== a.net_run_rate) {
-      return b.net_run_rate - a.net_run_rate;
-    }
     return b.team_id.localeCompare(a.team_id);
   });
 
@@ -83,8 +59,9 @@ function renderStandings() {
             </div>
           </td>
           <td>${row.played}</td>
+          <td>${row.won}</td>
+          <td>${row.lost}</td>
           <td>${row.points}</td>
-          <td>${row.net_run_rate.toFixed(3)}</td>
           <td>
             <div class="chance-wrap">
               <div class="chance-meta">
@@ -152,8 +129,6 @@ function renderMatches() {
 }
 
 function renderState() {
-  sourceName.textContent = state.appState?.source_name || "Unknown";
-  refreshTime.textContent = state.appState ? formatRefreshTime(state.appState.refreshed_at) : "Unknown";
   renderStandings();
   renderMatches();
 }
@@ -169,27 +144,7 @@ async function loadState() {
   renderState();
 }
 
-async function refreshData() {
-  clearMessage();
-  refreshButton.disabled = true;
-  try {
-    const payload = await requestJson("/api/refresh-data", { method: "POST" });
-    state.appState = payload.state;
-    state.matchProbabilities = {};
-    state.qualificationPercentages = Object.fromEntries(
-      payload.state.standings.map((row) => [row.team_id, 0])
-    );
-    renderState();
-    showMessage("Standings and results snapshot refreshed.");
-  } catch (error) {
-    showMessage(error.message, true);
-  } finally {
-    refreshButton.disabled = false;
-  }
-}
-
-async function runSimulation() {
-  clearMessage();
+async function runSimulation({ silent = false } = {}) {
   simulateButton.disabled = true;
   try {
     const payload = await requestJson("/api/simulate", {
@@ -211,14 +166,16 @@ async function runSimulation() {
       state.appState.standings = payload.ordered_standings;
     }
     renderState();
-    showMessage(`Simulation complete using ${payload.simulation_count.toLocaleString()} trials.`);
   } catch (error) {
-    showMessage(error.message, true);
+    if (!silent) {
+      window.alert(error.message);
+    }
   } finally {
     simulateButton.disabled = false;
   }
 }
 
-refreshButton.addEventListener("click", refreshData);
 simulateButton.addEventListener("click", runSimulation);
-loadState().catch((error) => showMessage(error.message, true));
+loadState()
+  .then(() => runSimulation({ silent: true }))
+  .catch((error) => window.alert(error.message));

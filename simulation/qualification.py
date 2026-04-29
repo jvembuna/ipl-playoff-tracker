@@ -11,7 +11,7 @@ QUALIFICATION_SLOTS = 4
 def rank_teams(teams: Iterable[TeamState]) -> list[TeamState]:
     return sorted(
         teams,
-        key=lambda team: (team.points, team.net_run_rate, team.team_id),
+        key=lambda team: (team.points, team.team_id),
         reverse=True,
     )
 

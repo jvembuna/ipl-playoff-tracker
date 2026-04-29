@@ -12,7 +12,7 @@ def test_rank_teams_uses_points_then_nrr() -> None:
     ]
 
     ranked = rank_teams(teams)
-    assert [team.team_id for team in ranked] == ["RCB", "CSK", "MI"]
+    assert [team.team_id for team in ranked] == ["RCB", "MI", "CSK"]
 
 
 def test_qualified_team_ids_returns_top_four() -> None:

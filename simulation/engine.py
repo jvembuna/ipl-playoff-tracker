@@ -10,8 +10,7 @@ from simulation.qualification import qualified_team_ids
 
 
 class MonteCarloSimulator:
-    def __init__(self, nrr_delta: float = 0.1, seed: int | None = None) -> None:
-        self.nrr_delta = nrr_delta
+    def __init__(self, seed: int | None = None) -> None:
         self.random = random.Random(seed)
 
     def run(
@@ -59,8 +58,6 @@ class MonteCarloSimulator:
         winner.played += 1
         winner.won += 1
         winner.points += 2
-        winner.net_run_rate += self.nrr_delta
 
         loser.played += 1
         loser.lost += 1
-        loser.net_run_rate -= self.nrr_delta

@@ -22,7 +22,7 @@ class FixtureStateProvider:
                 lost=row["lost"],
                 no_result=row["no_result"],
                 points=row["points"],
-                net_run_rate=float(row["net_run_rate"]),
+                net_run_rate=float(row.get("net_run_rate", 0.0)),
             )
             for row in payload["standings"]
         ]
@@ -40,7 +40,7 @@ class FixtureStateProvider:
         return AppState(
             standings=sorted(
                 standings,
-                key=lambda row: (row.points, row.net_run_rate, row.team_id),
+                key=lambda row: (row.points, row.team_id),
                 reverse=True,
             ),
             full_fixture_list=full_fixture_list,

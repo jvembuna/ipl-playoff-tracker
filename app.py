@@ -47,16 +47,6 @@ def create_app() -> Flask:
             }
         )
 
-    @app.post("/api/refresh-data")
-    def refresh_data() -> Any:
-        state = data_service.refresh_data()
-        return jsonify(
-            {
-                "status": "ok",
-                "state": state.to_dict(),
-            }
-        )
-
     @app.post("/api/simulate")
     def simulate() -> Any:
         payload = request.get_json(silent=True) or {}
@@ -86,7 +76,6 @@ def create_app() -> Flask:
             key=lambda item: (
                 item[1],
                 standings_by_team[item[0]].points,
-                standings_by_team[item[0]].net_run_rate,
                 item[0],
             ),
             reverse=True,
@@ -116,3 +105,10 @@ def create_app() -> Flask:
 
 
 app = create_app()
+
+
+if __name__ == "__main__":
+    host = os.getenv("FLASK_RUN_HOST", "127.0.0.1")
+    port = int(os.getenv("FLASK_RUN_PORT", "5000"))
+    debug = os.getenv("FLASK_DEBUG", "").lower() in {"1", "true", "yes", "on"}
+    app.run(host=host, port=port, debug=debug)
