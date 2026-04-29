@@ -13,7 +13,6 @@ class TeamState:
     lost: int
     no_result: int
     points: int
-    net_run_rate: float
 
     @classmethod
     def from_standing(cls, row: StandingRow) -> "TeamState":
@@ -24,7 +23,6 @@ class TeamState:
             lost=row.lost,
             no_result=row.no_result,
             points=row.points,
-            net_run_rate=row.net_run_rate,
         )
 
 

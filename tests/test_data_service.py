@@ -16,6 +16,7 @@ def test_data_service_returns_seeded_state() -> None:
     assert state.source_name == "manual_seed"
     assert len(state.standings) == 10
     assert len(state.remaining_matches) == 30
+    assert state.refreshed_at == "2026-04-29"
 
 
 def test_fixture_provider_uses_points_only_ordering() -> None:
