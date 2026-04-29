@@ -24,6 +24,19 @@ const TEAM_COLORS = {
   LSG: "#1f8e87",
 };
 
+const TEAM_LOGOS = {
+  PBKS: "/static/images/teams/pbks.png",
+  RCB: "/static/images/teams/rcb.png",
+  SRH: "/static/images/teams/srh.png",
+  RR: "/static/images/teams/rr.png",
+  GT: "/static/images/teams/gt.png",
+  CSK: "/static/images/teams/csk.png",
+  DC: "/static/images/teams/dc.png",
+  KKR: "/static/images/teams/kkr.png",
+  MI: "/static/images/teams/mi.png",
+  LSG: "/static/images/teams/lsg.png",
+};
+
 let historyChart = null;
 let highlightedTeamId = null;
 
@@ -100,7 +113,12 @@ function renderStandings() {
         <tr>
           <td>
             <div class="team-cell">
-              <span class="team-badge">${row.team_id}</span>
+              <img
+                class="team-logo"
+                src="${TEAM_LOGOS[row.team_id] || ""}"
+                alt="${row.team_name} logo"
+                loading="lazy"
+              >
               <span>${row.team_name}</span>
             </div>
           </td>
