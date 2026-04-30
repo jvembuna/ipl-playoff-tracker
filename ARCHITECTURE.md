@@ -2,168 +2,185 @@
 
 ## Design Intent
 
-This project should follow a small-module architecture with clear boundaries:
+The codebase is intentionally small and explicit:
 
 - Flask handles HTTP and template rendering
-- `ipl_data` hides data retrieval and parsing details
-- `simulation` owns qualification modeling and Monte Carlo logic
+- `ipl_data` owns fixture loading and history persistence
+- `simulation` owns Monte Carlo logic
 - the frontend renders state and sends simple API requests
 
-The main rule is that simulation logic must not depend on Flask, and data-fetching details must not leak into the rest of the application.
+The current app is optimized for clarity over abstraction depth.
 
-This architecture also deliberately fixes the main structural limitations of the original notebook:
-
-- avoid mutable global standings state during simulation
-- avoid update-then-rollback recursion as the main engine
-- avoid exhaustive binary branching when the number of matches grows
-
-## Planned High-Level Flow
+## Current High-Level Flow
 
 ```text
 Browser
   -> GET /
   -> Render HTML + CSS + JS
 
-Browser action: Refresh IPL Data
-  -> POST /api/refresh-data
-  -> Flask route
-  -> IPL data service
-  -> refresh latest standings/results
-  -> merge with stored season schedule
-  -> in-memory app state update
-  -> JSON response
+Frontend startup
+  -> GET /api/state
+  -> render standings, matches, history
+  -> POST /api/simulate with default settings
+  -> render qualification chances
 
-Browser action: Run Simulation
+User action: Run Simulation
   -> POST /api/simulate
   -> Flask route
-  -> request validation
-  -> simulation service
-  -> qualification percentages
+  -> Monte Carlo simulator
   -> JSON response
-  -> frontend renders results
+  -> frontend rerenders standings and chart
 ```
 
-## Planned Module Boundaries
+## Current Module Boundaries
 
 ### Flask Layer
 
+Primary file:
+
+- [app.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/app.py)
+
 Responsibilities:
 
-- define routes
-- validate request payloads
-- call service interfaces
-- return JSON or HTML responses
-- enforce server-side simulation limits
+- create the app
+- read environment configuration
+- wire together fixture provider, history store, state store, and simulator
+- expose routes
+- clamp simulation count
 
-Should not contain:
+Routes:
 
-- scraping logic
-- Monte Carlo logic
-- ranking logic
+- `GET /`
+- `GET /api/state`
+- `POST /api/simulate`
 
 ### `ipl_data` Layer
 
+Primary files:
+
+- [ipl_data/models.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/models.py)
+- [ipl_data/fixture_provider.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixture_provider.py)
+- [ipl_data/history_store.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/history_store.py)
+- [ipl_data/service.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/service.py)
+- [ipl_data/state_store.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/state_store.py)
+
 Responsibilities:
 
-- ingest season schedule from the web or local fixture data
-- refresh live IPL standings or completed results if possible
-- normalize raw data into internal models
-- load fallback JSON fixture data
-- derive remaining matches from the stored schedule plus refreshed results
-- expose a small refresh interface to the app
-
-Suggested interface:
-
-```python
-state = data_service.refresh()
-```
-
-or
-
-```python
-state = provider.load_state()
-```
+- define standings, match, history, and app-state models
+- load current snapshot from the seed file
+- load history from the history file
+- format JSON output in one-line-per-entity style
+- optionally append one daily baseline history snapshot in development mode
+- expose current state through a small service boundary
 
 ### `simulation` Layer
 
+Primary files:
+
+- [simulation/models.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/simulation/models.py)
+- [simulation/engine.py](/Users/janardhanan/Desktop/learning/codex-drills/ipl/simulation/engine.py)
+
 Responsibilities:
 
-- represent standings and matches
-- derive per-match probabilities from user input
+- convert standing rows into mutable per-trial team state
+- normalize per-match probabilities
 - run Monte Carlo trials
-- rank teams and count qualification outcomes
-- preserve the invariant that base input state is unchanged after a simulation request
-
-Suggested interface:
-
-```python
-result = simulator.run(
-    standings=...,
-    remaining_matches=...,
-    match_probabilities=...,
-    simulation_count=...
-)
-```
-
-Internally, each trial should operate on copied team state. That preserves the useful guarantee from the notebook that the original standings must not be altered by running a simulation, but does so without explicit rollback mechanics.
+- apply results to copied state
+- rank teams by points, then deterministic team id fallback
+- return qualification percentages and normalized probabilities
 
 ### Frontend Layer
 
+Primary files:
+
+- [templates/index.html](/Users/janardhanan/Desktop/learning/codex-drills/ipl/templates/index.html)
+- [static/js/app.js](/Users/janardhanan/Desktop/learning/codex-drills/ipl/static/js/app.js)
+- [static/css/styles.css](/Users/janardhanan/Desktop/learning/codex-drills/ipl/static/css/styles.css)
+
 Responsibilities:
 
-- render current standings with qualification chance in the same table
-- render remaining matches
-- render one slider per remaining match, defaulted to 50/50
-- call refresh and simulate endpoints
-- display results and loading/error states
+- render standings with logos and qualification chance
+- render remaining matches and sliders
+- auto-run the default simulation on first load
+- render the qualification history chart
+- highlight one team at a time from the clickable legend
 
-Should not contain:
+## State Management
 
-- business rules for qualification
-- sensitive trust in client-provided simulation limits
+The server stores one shared in-memory `AppState`.
 
-## Planned State Management
+Source of truth at startup:
 
-The application will store the current IPL state in memory on the server.
+- seed snapshot: [ipl_2026_sample.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixtures/ipl_2026_sample.json)
+- history file: [ipl_2026_qualification_history.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixtures/ipl_2026_qualification_history.json)
 
 Implications:
 
-- state is shared by all users
-- state resets when the process restarts
-- this is acceptable for V1
+- all users see the same state
+- state resets on process restart
+- manual fixture edits are the current workflow
 
-The state container should be wrapped in a small module so a future database-backed implementation can replace it with minimal changes.
+## History Persistence Flow
 
-## Planned Directory Structure
+This flow is enabled only when:
+
+- `APP_ENV=development`
+- `ENABLE_HISTORY_PERSIST=true`
+
+Flow:
+
+1. app starts
+2. fixture provider loads current state
+3. simulator runs the default baseline simulation
+4. history store checks whether `refreshed_at` already exists in history
+5. if missing, it appends one entry and rewrites the history JSON file
+
+Custom slider runs are never persisted.
+
+## Deployment Architecture
+
+The current production deployment path is:
+
+```text
+Local workspace
+  -> Docker build
+  -> ECR push
+  -> AWS App Runner deployment
+```
+
+Deployment files:
+
+- [Dockerfile](/Users/janardhanan/Desktop/learning/codex-drills/ipl/Dockerfile)
+- [.dockerignore](/Users/janardhanan/Desktop/learning/codex-drills/ipl/.dockerignore)
+- [deploy/apprunner-service.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/deploy/apprunner-service.json)
+
+Runtime behavior in production:
+
+- `gunicorn` serves `app:app`
+- the container listens on `PORT`
+- history persistence remains off by default
+
+## Current Directory Structure
 
 ```text
 ipl/
   app.py
-  requirements.txt
-  README.md
-  SPEC.md
-  ARCHITECTURE.md
-  AGENTS.md
-  TODO.md
+  Dockerfile
+  .dockerignore
+  deploy/
+    apprunner-service.json
   ipl_data/
-    __init__.py
     models.py
+    fixture_provider.py
+    history_store.py
     service.py
     state_store.py
-    providers/
-      __init__.py
-      base.py
-      results_provider.py
-      schedule_provider.py
-      fixture_provider.py
     fixtures/
       ipl_2026_sample.json
+      ipl_2026_qualification_history.json
   simulation/
-    __init__.py
     models.py
-    probability.py
     engine.py
-    qualification.py
   templates/
     index.html
   static/
@@ -172,49 +189,25 @@ ipl/
     js/
       app.js
     images/
-      logos/
+      teams/
   tests/
-    test_data_service.py
-    test_simulation_engine.py
-    test_probability.py
-    test_qualification.py
+    conftest.py
     test_api.py
+    test_data_service.py
+    test_history_store.py
+    test_simulation_engine.py
 ```
-
-## Data Flow
-
-### Refresh Flow
-
-1. User clicks refresh
-2. Frontend calls `POST /api/refresh-data`
-3. Flask route invokes the data service
-4. Data service refreshes latest standings or completed results
-5. The service merges refreshed results with the stored season schedule
-6. Remaining matches are recalculated
-7. Shared in-memory state is replaced
-8. Response returns normalized state
-
-### Simulation Flow
-
-1. User adjusts sliders
-2. Frontend sends simulation request
-3. Flask validates and clamps simulation count
-4. Simulation engine reads direct per-match win probabilities
-5. Monte Carlo trials update copied standings, including placeholder NRR deltas
-6. Qualification counts are aggregated
-7. Percentages are returned to the UI
 
 ## Error Handling Strategy
 
-- If live refresh fails, try fixture fallback if configured
-- If both fail, return a clear JSON error
-- If simulation input is malformed, return validation errors
-- If no current state exists yet, simulation endpoint should fail clearly rather than guess
+- malformed simulation counts return `400`
+- simulation counts are clamped server-side
+- missing history file falls back to empty history
+- production avoids writing local history files
 
 ## Future Evolution
 
-- add daily scheduled refresh at 11:30 AM PT
-- persist refreshed state to disk or database
-- support richer qualification rules
-- support automatic schedule updates if needed
-- add caching and observability
+- add a live data refresh path later
+- add more realistic tie-break logic later
+- persist current state outside process memory later
+- expand the history view and comparisons later

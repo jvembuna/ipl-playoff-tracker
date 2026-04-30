@@ -1,66 +1,44 @@
 # TODO
 
-## Phase 0: Planning
+## Current Baseline
 
-- [x] Create repository planning documents
-- [x] Define project scope and non-goals
-- [x] Define initial API shape
-- [x] Define architecture and module boundaries
-- [x] Define safe agent workflow guidance
-- [x] Capture lessons from the 2024 notebook
-- [x] Stop and wait for implementation approval
+- [x] Build the Flask web app
+- [x] Add fixture-backed standings and remaining matches
+- [x] Add Monte Carlo simulation
+- [x] Add server-side simulation clamping
+- [x] Add standings table with qualification chance
+- [x] Add per-match probability sliders
+- [x] Add qualification history chart
+- [x] Add team logos
+- [x] Add Docker and AWS App Runner deployment path
 
-## Phase 1: Foundation
+## Next Product Improvements
 
-- [ ] Create Python project skeleton
-- [ ] Add Flask and test dependencies
-- [ ] Add application entry point
-- [ ] Add basic template and static asset structure
+- [ ] Improve chart readability as daily history grows
+- [ ] Consider richer hover or comparison behavior in the history chart
+- [ ] Decide whether to add a lightweight way to surface the current seed date in the UI
+- [ ] Consider a simple "reset all sliders to 50/50" action
+- [ ] Consider showing the currently selected highlighted team more explicitly in the chart legend
 
-## Phase 2: IPL Data
+## Data Workflow
 
-- [ ] Define internal standings and match models
-- [ ] Implement fixture JSON loader
-- [ ] Add normalized season schedule fixture data
-- [ ] Investigate practical live standings and fixture source
-- [ ] Implement one-time schedule ingestion path
-- [ ] Implement daily results or standings refresh provider
-- [ ] Implement refresh service with fallback behavior
-- [ ] Derive remaining matches from schedule minus completed matches
-- [ ] Add tests for data normalization and fallback handling
+- [ ] Decide whether to keep manual JSON updates indefinitely or reintroduce a live refresh path later
+- [ ] If live refresh returns, keep the current manual fixture path as a safe fallback
+- [ ] Consider adding a small validation script for manual standings and match edits
 
-## Phase 3: Simulation
+## Simulation Improvements
 
-- [ ] Implement per-match probability validation
-- [ ] Implement Monte Carlo simulation engine
-- [ ] Implement qualification counting
-- [ ] Implement isolated tie-break logic
-- [ ] Implement fixed simulated NRR delta policy of `+0.1/-0.1`
-- [ ] Add tests for probability handling
-- [ ] Add tests for qualification counting
-- [ ] Add tests for tie-break behavior
+- [ ] Decide whether the points-only tie-break is good enough or should be refined
+- [ ] Consider future no-result simulation only if there is a clear product need
+- [ ] Consider exposing a small set of preset simulation counts in the UI
 
-## Phase 4: Web App
+## Deployment Improvements
 
-- [ ] Implement `GET /`
-- [ ] Implement `POST /api/refresh-data`
-- [ ] Implement `GET /api/state`
-- [ ] Implement `POST /api/simulate`
-- [ ] Add server-side simulation limit enforcement
-- [ ] Build standings table with qualification chance included
-- [ ] Sort standings display by qualification chance after simulation
-- [ ] Add one 50/50 slider for each remaining match
-- [ ] Add loading and error states
-
-## Phase 5: Polish
-
-- [ ] Add simple styling
-- [ ] Add optional team logos if practical
-- [ ] Improve copy and empty states
-- [ ] Verify local run instructions
-- [ ] Verify tests pass end to end
+- [ ] Decide whether to vendor Chart.js locally instead of using a CDN
+- [ ] Add a short deployment runbook to the repo if AWS deploys become a regular workflow
+- [ ] Consider pushing committed code only for production deploys as a stricter workflow
 
 ## Open Questions
 
-- Which live source is stable enough for standings and fixtures in practice?
-- Should missing net run rate values default to zero or trigger a different deterministic ranking fallback?
+- When history gets denser, should the default chart view show all teams or start in a more focused mode?
+- Should future history snapshots continue to be keyed by `refreshed_at`, or should that ever diverge from the manually maintained seed date?

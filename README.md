@@ -1,52 +1,43 @@
-# IPL 2026 Qualification Probability Web App
+# IPL 2026 Playoff Tracker
 
 ## Overview
 
-This project will recreate a simple IPL qualification probability calculator as a small web app for the 2026 season.
+This is a small Flask web app that estimates IPL 2026 playoff qualification chances with a Monte Carlo simulation.
 
-The starting reference is a 2024 Jupyter Notebook that already established the core idea:
+The app currently uses manually maintained JSON fixtures for:
 
-- represent teams using matches played, points, and net run rate
-- represent remaining fixtures as team-vs-team pairs
-- rank teams by points and then NRR
-- estimate top-4 qualification odds from simulated remaining results
+- the latest standings snapshot
+- the remaining match list
+- daily qualification history
 
-The new project keeps that basic mental model, but moves it into cleaner modules with a web interface, tests, and a safer simulation design.
+Users can adjust the win probability for each remaining match, run the simulation, and see:
 
-The app will:
+- qualification chance in the standings table
+- a qualification history chart over time
+- remaining matches with per-match sliders
 
-- fetch or load current IPL standings and remaining fixtures
-- let the user refresh the shared in-memory dataset
-- let the user adjust per-match win probabilities
-- run a Monte Carlo simulation on the backend
-- show each team's estimated chance of finishing in the top qualification spots
+## Current Product Shape
 
-This repository is intentionally planned in two phases:
+The current version is intentionally simple:
 
-1. Phase 0: documentation, design, and implementation plan
-2. Phase 1: application code after plan approval
+- Flask backend
+- plain HTML, CSS, and JavaScript frontend
+- shared in-memory server state
+- fixture-backed IPL data
+- no database
+- no live data refresh flow
 
-No application code should be added until the plan in this repository is approved.
+The standings table includes team logos, points, no-result count, and qualification chance.
 
-## Goals
+## How It Works
 
-- Keep the first version simple, readable, and easy to run locally
-- Use Flask on the backend
-- Use plain HTML, CSS, and JavaScript on the frontend
-- Keep scraping and simulation logic isolated behind small interfaces
-- Allow fallback to local JSON data if live data fetching is brittle
-- Make the simulation engine independently testable
+1. The backend loads the current state from [ipl_2026_sample.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixtures/ipl_2026_sample.json).
+2. It loads saved history from [ipl_2026_qualification_history.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixtures/ipl_2026_qualification_history.json).
+3. The frontend loads the current state from `GET /api/state`.
+4. On page load, the frontend runs a default simulation.
+5. Users can adjust per-match probabilities and rerun the simulation through `POST /api/simulate`.
 
-## Non-Goals For V1
-
-- No database
-- No authentication
-- No background scheduler
-- No distributed cache
-- No heavy frontend framework
-- No attempt to exactly mirror every official IPL tie-break rule in the first version
-
-## Planned Local Setup
+## Local Setup
 
 ```bash
 python -m venv .venv
@@ -56,25 +47,49 @@ pytest
 flask --app app run
 ```
 
-## Planned User Flow
+Or run directly:
 
-1. Open the web app
-2. View the current standings table with qualification chance included
-3. Click `Refresh IPL Data` to load the latest available standings/results snapshot
-4. Adjust the win-probability slider for each remaining match if desired
-5. Click `Run Simulation`
-6. View the standings table re-ordered from highest to lowest qualification chance
+```bash
+python app.py
+```
 
-## Planned Data Sources
+## History Persistence In Dev
 
-The app will treat season data as two different concerns:
+The app can record one baseline history snapshot per `refreshed_at` date, but only when explicitly enabled.
 
-- static schedule data: fetched once from a practical web source and stored in Python or a local fixture file
-- refreshable standings/results data: updated from the web as new match results become known
+Enable it locally with:
 
-For the first version, remaining matches do not need to be re-fetched on every click if the season schedule has already been captured cleanly. The daily-changing part is the standings/results snapshot, which the user will refresh manually from the UI for now.
+```bash
+export APP_ENV=development
+export ENABLE_HISTORY_PERSIST=true
+flask --app app run
+```
 
-If live fetching is unreliable, blocked, or too brittle, the app will fall back to local JSON fixtures. The rest of the app should behave the same regardless of data source.
+Behavior:
+
+- only the baseline 50/50 simulation is persisted
+- custom slider experiments are not persisted
+- a given `refreshed_at` date is written at most once
+
+## Deployment
+
+The project includes a container deployment path for AWS App Runner:
+
+- [Dockerfile](/Users/janardhanan/Desktop/learning/codex-drills/ipl/Dockerfile)
+- [.dockerignore](/Users/janardhanan/Desktop/learning/codex-drills/ipl/.dockerignore)
+- [deploy/apprunner-service.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/deploy/apprunner-service.json)
+
+The production container:
+
+- serves the Flask app with `gunicorn`
+- respects the platform `PORT` environment variable
+- disables history persistence by default
+
+## Key Endpoints
+
+- `GET /`
+- `GET /api/state`
+- `POST /api/simulate`
 
 ## Repository Documents
 

@@ -2,81 +2,52 @@
 
 ## Product Summary
 
-Build a simple IPL 2026 qualification probability web app using Flask, plain HTML, plain CSS, and plain JavaScript.
+Build a simple IPL 2026 playoff tracker using Flask, plain HTML, plain CSS, and plain JavaScript.
 
-The app estimates each team's probability of qualification based on:
+The app estimates each team's chance of finishing in the top 4 based on:
 
-- current standings
-- remaining matches
-- default or user-adjusted win probabilities
+- the current standings snapshot
+- the remaining matches
+- default or user-adjusted per-match win probabilities
 
-This is an intentional evolution of an earlier notebook implementation that exhaustively enumerated remaining outcomes for a small set of matches. The web app will preserve the same domain logic where useful, but package it into maintainable modules and replace exhaustive branching with Monte Carlo simulation.
+## What The App Does Today
 
-## Core Features
+### Current State
 
-### 1. Standings And Fixtures State
+The app currently uses fixture-backed data rather than live refresh.
 
-The app maintains one shared in-memory state for all users in the first version.
+It reads:
 
-That state contains:
+- current standings and remaining matches from [ipl_2026_sample.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixtures/ipl_2026_sample.json)
+- saved history from [ipl_2026_qualification_history.json](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ipl_data/fixtures/ipl_2026_qualification_history.json)
 
-- current standings
-- static season fixture list
-- remaining fixtures derived from schedule minus completed results
-- metadata about source and last refresh time
+### Simulation Input
 
-### 2. Manual Data Refresh
+The user can:
 
-The UI provides a `Refresh IPL Data` button.
+- accept the default 50/50 assumptions
+- move one slider per remaining match
+- choose a simulation count, bounded by the server
 
-When clicked:
+### Simulation Output
 
-- the frontend calls the backend refresh endpoint
-- the backend attempts to fetch the latest IPL 2026 standings or results snapshot
-- the backend merges that refreshed state with the stored season fixture list
-- remaining matches are recalculated from the known completed results
-- if live retrieval fails, the backend can load local JSON fixture data
-- the in-memory application state is updated
+The app returns:
 
-### 3. Simulation Inputs
+- qualification percentages by team
+- normalized match probabilities
+- standings ordered by qualification chance
 
-The user can run a Monte Carlo simulation using:
+### History
 
-- default 50/50 remaining match probabilities, or
-- adjusted probabilities set directly per remaining match with sliders
+The app shows a line chart of qualification history over time.
 
-The first version should keep the input model understandable and bounded.
+Each history point represents a daily baseline run using:
 
-### 4. Qualification Simulation
+- that day's standings
+- that day's remaining fixtures
+- default 50/50 win probabilities
 
-The backend runs a Monte Carlo simulation over the remaining matches.
-
-For each trial:
-
-- start from the current standings
-- simulate each remaining match using configured probabilities
-- update points
-- rank teams using simplified qualification rules
-- count which teams qualify
-
-After all trials:
-
-- convert counts into qualification percentages
-- return results to the frontend
-
-This differs from the 2024 notebook, which recursively explored both winner paths for every remaining match. That approach works for a tiny search space, but Monte Carlo is the right default once custom probabilities and a larger schedule are involved.
-
-### 5. Results Display
-
-The UI displays:
-
-- current standings with qualification chance included in the same table
-- remaining matches
-- one slider per remaining match
-- qualification percentages sorted from highest to lowest
-- a simple inline visual bar beside each qualification percentage
-
-Team logos may be shown if cleanly available, but logos are optional for the first functional version.
+History persistence is opt-in and development-only.
 
 ## API Contract
 
@@ -84,155 +55,162 @@ Team logos may be shown if cleanly available, but logos are optional for the fir
 
 Renders the main page.
 
-### `POST /api/refresh-data`
+### `GET /api/state`
 
-Refreshes shared IPL state.
-
-Planned response shape:
+Returns:
 
 ```json
 {
   "status": "ok",
-  "source": "live|fixture",
-  "refreshed_at": "ISO-8601 timestamp",
-  "standings": [],
-  "remaining_matches": []
+  "default_simulations": 10000,
+  "max_simulations": 50000,
+  "state": {
+    "standings": [],
+    "remaining_matches": [],
+    "qualification_history": [],
+    "source_name": "fixture",
+    "refreshed_at": "2026-04-29",
+    "notes": []
+  }
 }
 ```
 
-### `GET /api/state`
-
-Returns the currently loaded in-memory application state.
-
 ### `POST /api/simulate`
 
-Accepts simulation settings and returns qualification results.
-
-Planned request shape:
+Request:
 
 ```json
 {
   "simulation_count": 10000,
   "match_probabilities": {
-    "match_001": {
-      "team_a_win_probability": 0.5
-    },
-    "match_002": {
+    "match_041": {
       "team_a_win_probability": 0.5
     }
   }
 }
 ```
 
-Planned response shape:
+Response:
 
 ```json
 {
   "status": "ok",
   "simulation_count": 10000,
   "qualification_percentages": {
-    "CSK": 62.3,
-    "MI": 48.9
+    "PBKS": 92.4,
+    "RCB": 85.1
+  },
+  "ordered_standings": [],
+  "match_probabilities": {
+    "match_041": 0.5
   }
 }
 ```
 
-The backend must enforce a safe maximum simulation count even if the client requests more.
+The backend clamps the simulation count to a safe maximum.
 
 ## Domain Model
 
 ### Standing Row
 
-Planned fields:
+Fields:
 
-- team_id
-- team_name
-- played
-- won
-- lost
-- no_result
-- points
-- net_run_rate
+- `team_id`
+- `team_name`
+- `played`
+- `won`
+- `lost`
+- `no_result`
+- `points`
 
 ### Match
 
-Planned fields:
+Fields:
 
-- match_id
-- team_a
-- team_b
-- status
-- optional source metadata
+- `match_id`
+- `team_a`
+- `team_b`
+
+### Qualification History Entry
+
+Fields:
+
+- `date`
+- `simulation_count`
+- `qualification_percentages`
 
 ### App State
 
-Planned fields:
+Fields:
 
-- standings
-- full_fixture_list
-- remaining_matches
-- source_name
-- refreshed_at
+- `standings`
+- `remaining_matches`
+- `qualification_history`
+- `source_name`
+- `refreshed_at`
+- `notes`
 
-## Simulation Rules For V1
-
-The first version will use a simplified qualification model.
+## Simulation Rules
 
 ### Qualification
 
-- Assume top 4 teams qualify
+- Top 4 teams qualify
 
 ### Match Outcome
 
-- Each remaining match is simulated with a Bernoulli draw
-- Default win probability is 50/50
+- Each remaining match is sampled independently
+- Default win probability is `0.5`
 - User adjustments are set directly per remaining match
 
 ### Points
 
 - Winner gets 2 points
-- No-result handling is not simulated initially unless already present in the source data
+- No-result rows from the current standings are preserved
+- Future no-results are not simulated
 
 ### Tie-Break
 
-Start with a simple isolated tie-break strategy:
+The current ranking is intentionally simple:
 
 1. higher points
-2. higher net run rate if available
-3. stable deterministic fallback such as team name or team id
+2. deterministic fallback by `team_id`
 
-This keeps the ranking deterministic while allowing future refinement.
+This is not a full IPL tie-break model. It is a deliberate simplification for the current version.
 
-### Net Run Rate Handling
+## Current UX
 
-The notebook updated NRR using a placeholder rule where a winner gained `+0.1` and the loser lost `-0.1` for each simulated future match.
+The UI shows:
 
-For V1, we will keep that placeholder approach on purpose because it is simple, deterministic, and gives the simulator a practical tie-break mechanism without modeling match margins in detail.
+- a standings table with team logos and qualification chance
+- a remaining matches panel with one slider per match
+- a qualification history line chart below the standings table
+- a clickable legend that highlights one team and mutes the rest
 
-The V1 policy is:
-
-- use refreshed NRR as the starting tie-break value
-- apply a fixed simulated delta of `+0.1` to the winner and `-0.1` to the loser for each simulated future match
-- keep the policy in one module so it can later be improved without touching routes or UI code
-
-This is a simplification, not a claim of realistic NRR modeling.
+On first load, the frontend automatically runs the default simulation.
 
 ## Known Simplifications
 
-- Shared in-memory state for all users
-- Manual refresh only
-- One competition only: IPL 2026
-- Simplified tie-break behavior
-- The schedule can be captured once and stored locally rather than re-fetched every refresh
-- Manual refresh updates daily-changing standings/results data only
-- Local JSON fallback may be the primary development path if live data is unreliable
-- Simulated NRR movement uses a fixed `+0.1/-0.1` placeholder rule in V1
+- shared in-memory state for all users
+- fixture-backed data only
+- manual JSON updates for new standings and fixtures
+- no database
+- no auth
+- no background jobs
+- no live refresh endpoint
+- no future no-result simulation
+- simplified tie-break behavior
+
+## Deployment Assumptions
+
+- local development runs through Flask
+- production runs in a Docker container with `gunicorn`
+- AWS App Runner is the current deployment target
+- history persistence stays disabled in production
 
 ## Extension Points
 
-- Replace the data source without changing the rest of the app
-- Add scheduled refresh later
-- Swap in a database later
-- Add richer tie-break logic later
-- Add per-match editing later
-- Add historical calibration or team form models later
+- reintroduce live standings refresh later
+- add a scheduler or database later
+- improve tie-break logic later
+- add richer history views later
+- add match history or calibration later
