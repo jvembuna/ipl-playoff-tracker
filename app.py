@@ -100,8 +100,8 @@ def create_app() -> Flask:
         for team_id, percentage in sorted(
             result.qualification_percentages.items(),
             key=lambda item: (
-                item[1],
                 standings_by_team[item[0]].points,
+                standings_by_team[item[0]].net_run_rate,
                 item[0],
             ),
             reverse=True,

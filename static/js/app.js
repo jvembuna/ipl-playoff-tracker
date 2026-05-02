@@ -56,6 +56,11 @@ function percent(value) {
   return `${Number(value).toFixed(1)}%`;
 }
 
+function formatNetRunRate(value) {
+  const numeric = Number(value);
+  return `${numeric >= 0 ? "+" : ""}${numeric.toFixed(3)}`;
+}
+
 function compactDateLabel(value) {
   const [year, month, day] = String(value).split("-");
   if (!year || !month || !day) {
@@ -96,12 +101,11 @@ function renderStandings() {
 
   const standings = [...state.appState.standings];
   standings.sort((a, b) => {
-    const chanceDelta = currentQualification(b.team_id) - currentQualification(a.team_id);
-    if (chanceDelta !== 0) {
-      return chanceDelta;
-    }
     if (b.points !== a.points) {
       return b.points - a.points;
+    }
+    if (b.net_run_rate !== a.net_run_rate) {
+      return b.net_run_rate - a.net_run_rate;
     }
     return b.team_id.localeCompare(a.team_id);
   });
@@ -127,11 +131,11 @@ function renderStandings() {
           <td>${row.lost}</td>
           <td>${row.no_result}</td>
           <td>${row.points}</td>
+          <td>${formatNetRunRate(row.net_run_rate)}</td>
           <td>
             <div class="chance-wrap">
               <div class="chance-meta">
                 <span>${percent(chance)}</span>
-                <span>${row.team_id}</span>
               </div>
               <div class="chance-bar">
                 <span style="width: ${chance}%"></span>

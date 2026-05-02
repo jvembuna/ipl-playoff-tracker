@@ -31,6 +31,7 @@ class FixtureStateProvider:
                 lost=row["lost"],
                 no_result=row["no_result"],
                 points=row["points"],
+                net_run_rate=row["net_run_rate"],
             )
             for row in payload["standings"]
         ]
@@ -56,7 +57,7 @@ class FixtureStateProvider:
         return AppState(
             standings=sorted(
                 standings,
-                key=lambda row: (row.points, row.team_id),
+                key=lambda row: (row.points, row.net_run_rate, row.team_id),
                 reverse=True,
             ),
             remaining_matches=remaining_matches,

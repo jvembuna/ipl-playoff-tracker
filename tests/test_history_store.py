@@ -25,6 +25,7 @@ def test_history_store_records_one_snapshot_per_date(tmp_path: Path) -> None:
                         "lost": 5,
                         "no_result": 0,
                         "points": 6,
+                        "net_run_rate": 0.005,
                     },
                     {
                         "team_id": "MI",
@@ -34,6 +35,7 @@ def test_history_store_records_one_snapshot_per_date(tmp_path: Path) -> None:
                         "lost": 5,
                         "no_result": 0,
                         "points": 4,
+                        "net_run_rate": -0.803,
                     },
                 ],
                 "remaining_matches": [

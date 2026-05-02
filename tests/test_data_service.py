@@ -15,3 +15,5 @@ def test_data_service_returns_seeded_state() -> None:
     state = service.get_state()
     assert state.source_name == "manual_seed"
     assert len(state.standings) == 10
+    assert state.standings[1].team_id == "RCB"
+    assert state.standings[1].net_run_rate == 1.420

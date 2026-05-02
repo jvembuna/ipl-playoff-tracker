@@ -30,3 +30,4 @@ def test_state_endpoint_returns_seeded_state() -> None:
     assert payload["status"] == "ok"
     assert payload["state"]["standings"]
     assert "qualification_history" in payload["state"]
+    assert "net_run_rate" in payload["state"]["standings"][0]

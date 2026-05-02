@@ -12,6 +12,7 @@ class StandingRow:
     lost: int
     no_result: int
     points: int
+    net_run_rate: float
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -22,6 +23,7 @@ class StandingRow:
             "lost": self.lost,
             "no_result": self.no_result,
             "points": self.points,
+            "net_run_rate": self.net_run_rate,
         }
 
 
