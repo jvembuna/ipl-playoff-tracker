@@ -8,7 +8,7 @@
   "standings": [
     {"team_id": "PBKS", "team_name": "PBKS", "played": 9, "won": 6, "lost": 2, "no_result": 1, "points": 13, "net_run_rate": 0.855},
     {"team_id": "RCB", "team_name": "RCB", "played": 9, "won": 6, "lost": 3, "no_result": 0, "points": 12, "net_run_rate": 1.420},
-    {"team_id": "SRH", "team_name": "SRH", "played": 10, "won": 4, "lost": 3, "no_result": 0, "points": 12, "net_run_rate": 0.644},
+    {"team_id": "SRH", "team_name": "SRH", "played": 10, "won": 6, "lost": 4, "no_result": 0, "points": 12, "net_run_rate": 0.644},
     {"team_id": "RR", "team_name": "RR", "played": 10, "won": 6, "lost": 4, "no_result": 0, "points": 12, "net_run_rate": 0.510},
     {"team_id": "GT", "team_name": "GT", "played": 10, "won": 6, "lost": 4, "no_result": 0, "points": 12, "net_run_rate": -0.147},
     {"team_id": "CSK", "team_name": "CSK", "played": 9, "won": 4, "lost": 5, "no_result": 0, "points": 8, "net_run_rate": 0.005},
