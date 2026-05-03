@@ -1,25 +1,23 @@
 {
   "source_name": "manual_seed",
-  "refreshed_at": "2026-05-02",
+  "refreshed_at": "2026-05-03",
   "notes": [
     "This is a manually seeded IPL 2026 standings and remaining fixtures snapshot.",
     "Refresh is intentionally disabled in this version; update this file manually as results come in."
   ],
   "standings": [
-    {"team_id": "PBKS", "team_name": "PBKS", "played": 8, "won": 6, "lost": 1, "no_result": 1, "points": 13, "net_run_rate": 1.043},
+    {"team_id": "PBKS", "team_name": "PBKS", "played": 9, "won": 6, "lost": 2, "no_result": 1, "points": 13, "net_run_rate": 0.855},
     {"team_id": "RCB", "team_name": "RCB", "played": 9, "won": 6, "lost": 3, "no_result": 0, "points": 12, "net_run_rate": 1.420},
-    {"team_id": "SRH", "team_name": "SRH", "played": 9, "won": 6, "lost": 3, "no_result": 0, "points": 12, "net_run_rate": 0.832},
+    {"team_id": "SRH", "team_name": "SRH", "played": 10, "won": 4, "lost": 3, "no_result": 0, "points": 12, "net_run_rate": 0.644},
     {"team_id": "RR", "team_name": "RR", "played": 10, "won": 6, "lost": 4, "no_result": 0, "points": 12, "net_run_rate": 0.510},
-    {"team_id": "GT", "team_name": "GT", "played": 9, "won": 5, "lost": 4, "no_result": 0, "points": 10, "net_run_rate": -0.192},
+    {"team_id": "GT", "team_name": "GT", "played": 10, "won": 6, "lost": 4, "no_result": 0, "points": 12, "net_run_rate": -0.147},
     {"team_id": "CSK", "team_name": "CSK", "played": 9, "won": 4, "lost": 5, "no_result": 0, "points": 8, "net_run_rate": 0.005},
     {"team_id": "DC", "team_name": "DC", "played": 9, "won": 4, "lost": 5, "no_result": 0, "points": 8, "net_run_rate": -0.895},
-    {"team_id": "KKR", "team_name": "KKR", "played": 8, "won": 2, "lost": 5, "no_result": 1, "points": 5, "net_run_rate": -0.751},
+    {"team_id": "KKR", "team_name": "KKR", "played": 9, "won": 3, "lost": 5, "no_result": 1, "points": 7, "net_run_rate": -0.539},
     {"team_id": "MI", "team_name": "MI", "played": 9, "won": 2, "lost": 7, "no_result": 0, "points": 4, "net_run_rate": -0.803},
     {"team_id": "LSG", "team_name": "LSG", "played": 8, "won": 2, "lost": 6, "no_result": 0, "points": 4, "net_run_rate": -1.106}
   ],
   "remaining_matches": [
-    {"match_id": "match_045", "team_a": "SRH", "team_b": "KKR"},
-    {"match_id": "match_046", "team_a": "PBKS", "team_b": "GT"},
     {"match_id": "match_047", "team_a": "MI", "team_b": "LSG"},
     {"match_id": "match_048", "team_a": "DC", "team_b": "CSK"},
     {"match_id": "match_049", "team_a": "PBKS", "team_b": "SRH"},
