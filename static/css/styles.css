@@ -224,6 +224,10 @@ tbody td {
   vertical-align: middle;
 }
 
+tbody tr.is-eliminated td {
+  background: rgba(186, 63, 63, 0.08);
+}
+
 .team-cell {
   display: flex;
   align-items: center;

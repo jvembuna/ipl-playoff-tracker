@@ -113,8 +113,9 @@ function renderStandings() {
   standingsBody.innerHTML = standings
     .map((row) => {
       const chance = currentQualification(row.team_id);
+      const rowClass = chance === 0 ? "is-eliminated" : "";
       return `
-        <tr>
+        <tr class="${rowClass}">
           <td>
             <div class="team-cell">
               <img
