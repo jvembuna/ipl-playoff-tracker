@@ -97,3 +97,29 @@ def test_qualified_team_ids_returns_top_four() -> None:
     ]
 
     assert simulator._qualified_team_ids(teams) == ["A", "B", "C", "D"]
+
+
+def test_nrr_delta_is_positive_and_bounded() -> None:
+    simulator = MonteCarloSimulator(seed=1)
+
+    deltas = [simulator._sample_nrr_delta() for _ in range(50)]
+
+    assert all(delta >= simulator.NRR_DELTA_MIN for delta in deltas)
+
+
+def test_apply_result_updates_points_and_nrr() -> None:
+    simulator = MonteCarloSimulator(seed=1)
+    winner = TeamState("CSK", 10, 6, 4, 0, 12, 0.200)
+    loser = TeamState("MI", 10, 5, 5, 0, 10, -0.150)
+
+    simulator._apply_result(winner=winner, loser=loser)
+
+    assert winner.played == 11
+    assert winner.won == 7
+    assert winner.points == 14
+    assert winner.net_run_rate > 0.200
+
+    assert loser.played == 11
+    assert loser.lost == 6
+    assert loser.points == 10
+    assert loser.net_run_rate < -0.150

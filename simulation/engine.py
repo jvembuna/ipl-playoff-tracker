@@ -9,6 +9,10 @@ from simulation.models import SimulationResult, TeamState
 
 
 class MonteCarloSimulator:
+    NRR_DELTA_MEAN = 0.10
+    NRR_DELTA_STDDEV = 0.03
+    NRR_DELTA_MIN = 0.01
+
     def __init__(self, seed: int | None = None) -> None:
         self.random = random.Random(seed)
 
@@ -59,12 +63,22 @@ class MonteCarloSimulator:
         )
 
     def _apply_result(self, winner: TeamState, loser: TeamState) -> None:
+        nrr_delta = self._sample_nrr_delta()
+
         winner.played += 1
         winner.won += 1
         winner.points += 2
+        winner.net_run_rate += nrr_delta
 
         loser.played += 1
         loser.lost += 1
+        loser.net_run_rate -= nrr_delta
+
+    def _sample_nrr_delta(self) -> float:
+        return max(
+            self.NRR_DELTA_MIN,
+            self.random.gauss(self.NRR_DELTA_MEAN, self.NRR_DELTA_STDDEV),
+        )
 
     def _normalize_match_probabilities(
         self,
