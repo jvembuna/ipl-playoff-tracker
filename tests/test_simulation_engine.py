@@ -123,3 +123,27 @@ def test_apply_result_updates_points_and_nrr() -> None:
     assert loser.lost == 6
     assert loser.points == 10
     assert loser.net_run_rate < -0.150
+
+
+def test_empty_remaining_matches_returns_current_top_four() -> None:
+    simulator = MonteCarloSimulator(seed=1)
+    standings = [
+        StandingRow("SRH", "SRH", 11, 7, 4, 0, 14, 0.737),
+        StandingRow("PBKS", "PBKS", 10, 6, 3, 1, 13, 0.571),
+        StandingRow("RCB", "RCB", 9, 6, 3, 0, 12, 1.420),
+        StandingRow("RR", "RR", 10, 6, 4, 0, 12, 0.510),
+        StandingRow("GT", "GT", 10, 6, 4, 0, 12, -0.147),
+    ]
+
+    result = simulator.run(
+        standings=standings,
+        remaining_matches=[],
+        match_probabilities={},
+        simulation_count=100,
+    )
+
+    assert result.qualification_percentages["SRH"] == 100.0
+    assert result.qualification_percentages["PBKS"] == 100.0
+    assert result.qualification_percentages["RCB"] == 100.0
+    assert result.qualification_percentages["RR"] == 100.0
+    assert result.qualification_percentages["GT"] == 0.0

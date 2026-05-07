@@ -73,6 +73,10 @@ function currentQualification(teamId) {
   return state.qualificationPercentages?.[teamId] ?? 0;
 }
 
+function noRemainingMatches() {
+  return (state.appState?.remaining_matches?.length || 0) === 0;
+}
+
 function chartHistoryEntries() {
   const history = [...(state.appState?.qualification_history || [])];
   if (!state.appState || !state.qualificationPercentages) {
@@ -162,6 +166,11 @@ function renderMatches() {
     return;
   }
 
+  if (noRemainingMatches()) {
+    matchesList.innerHTML = '<p class="matches-empty">No more matches</p>';
+    return;
+  }
+
   matchesList.innerHTML = state.appState.remaining_matches
     .map((match) => {
       const probability = sliderProbability(match.match_id);
@@ -199,6 +208,9 @@ function renderMatches() {
 }
 
 function renderState() {
+  const controlsDisabled = noRemainingMatches();
+  simulationCountInput.disabled = controlsDisabled;
+  simulateButton.disabled = controlsDisabled;
   renderStandings();
   renderMatches();
   renderHistoryChart();
@@ -301,6 +313,10 @@ function renderHistoryChart() {
 }
 
 async function runSimulation({ silent = false } = {}) {
+  if (noRemainingMatches()) {
+    return;
+  }
+
   simulateButton.disabled = true;
   try {
     const payload = await requestJson("/api/simulate", {

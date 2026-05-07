@@ -124,6 +124,12 @@ p {
   font-weight: 700;
 }
 
+#simulation-count:disabled,
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .layout-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.95fr);
@@ -272,6 +278,12 @@ tbody tr.is-eliminated td {
 .matches-list {
   display: grid;
   gap: 0.9rem;
+}
+
+.matches-empty {
+  padding: 1rem 0.2rem 0.1rem;
+  color: var(--muted);
+  font-weight: 700;
 }
 
 .match-card {
