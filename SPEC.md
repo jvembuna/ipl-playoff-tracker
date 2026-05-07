@@ -35,7 +35,7 @@ The app returns:
 
 - qualification percentages by team
 - normalized match probabilities
-- standings ordered by qualification chance
+- standings ordered like a league table using points and NRR
 
 ### History
 
@@ -122,6 +122,7 @@ Fields:
 - `lost`
 - `no_result`
 - `points`
+- `net_run_rate`
 
 ### Match
 
@@ -170,12 +171,31 @@ Fields:
 
 ### Tie-Break
 
-The current ranking is intentionally simple:
+The current ranking uses:
 
 1. higher points
-2. deterministic fallback by `team_id`
+2. higher NRR
+3. deterministic fallback by `team_id`
 
-This is not a full IPL tie-break model. It is a deliberate simplification for the current version.
+This is still a simplification, but it is closer to the real league table than a pure alphabetical fallback.
+
+### Simulated NRR Movement
+
+Future simulated matches also move NRR.
+
+For a decided match:
+
+- sample a small positive delta from a normal distribution
+- winner gets `+delta`
+- loser gets `-delta`
+
+Current default parameters:
+
+- mean `0.10`
+- standard deviation `0.03`
+- minimum delta `0.01`
+
+This is a simulation heuristic, not an official scorecard-based NRR recomputation from runs and overs.
 
 ## Current UX
 
@@ -185,6 +205,7 @@ The UI shows:
 - a remaining matches panel with one slider per match
 - a qualification history line chart below the standings table
 - a clickable legend that highlights one team and mutes the rest
+- a no-more-matches state that disables simulation controls once the schedule is finished
 
 On first load, the frontend automatically runs the default simulation.
 
@@ -198,7 +219,7 @@ On first load, the frontend automatically runs the default simulation.
 - no background jobs
 - no live refresh endpoint
 - no future no-result simulation
-- simplified tie-break behavior
+- simulated future NRR uses a simple random delta model rather than official cumulative score-based recomputation
 
 ## Deployment Assumptions
 

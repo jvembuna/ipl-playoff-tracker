@@ -13,6 +13,7 @@ Current shape:
 - fixture-backed Flask app
 - Monte Carlo simulation engine
 - qualification history chart
+- NRR-aware table ordering and tie-breaks
 - AWS App Runner deployment path
 
 ## Working Principles
@@ -119,6 +120,7 @@ Key files:
 ## Handoff Notes For Future Agents
 
 - Read [README.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/README.md), [SPEC.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/SPEC.md), and [ARCHITECTURE.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ARCHITECTURE.md) before making changes
+- Read [MONTE_CARLO.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/MONTE_CARLO.md) before changing simulation behavior
 - Treat the fixture files as an intentional manual workflow, not a temporary mistake
 - Keep the history file separate from the main snapshot file
 - If live data fetching returns later, add it behind a clean boundary rather than reviving stale planned code

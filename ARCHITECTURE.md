@@ -86,7 +86,8 @@ Responsibilities:
 - normalize per-match probabilities
 - run Monte Carlo trials
 - apply results to copied state
-- rank teams by points, then deterministic team id fallback
+- move NRR on simulated wins and losses using a small sampled delta
+- rank teams by points, then NRR, then deterministic team id fallback
 - return qualification percentages and normalized probabilities
 
 ### Frontend Layer
@@ -104,6 +105,7 @@ Responsibilities:
 - auto-run the default simulation on first load
 - render the qualification history chart
 - highlight one team at a time from the clickable legend
+- disable simulation controls when there are no remaining matches
 
 ## State Management
 
@@ -208,6 +210,6 @@ ipl/
 ## Future Evolution
 
 - add a live data refresh path later
-- add more realistic tie-break logic later
+- add more realistic NRR recomputation later if needed
 - persist current state outside process memory later
 - expand the history view and comparisons later

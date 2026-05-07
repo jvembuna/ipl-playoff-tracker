@@ -16,6 +16,12 @@ Users can adjust the win probability for each remaining match, run the simulatio
 - a qualification history chart over time
 - remaining matches with per-match sliders
 
+The app also uses:
+
+- points as the main ranking metric
+- NRR as the tie-break when teams are level on points
+- a small simulated NRR movement for future wins and losses
+
 ## Current Product Shape
 
 The current version is intentionally simple:
@@ -95,5 +101,6 @@ The production container:
 
 - [SPEC.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/SPEC.md)
 - [ARCHITECTURE.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ARCHITECTURE.md)
+- [MONTE_CARLO.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/MONTE_CARLO.md)
 - [AGENTS.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/AGENTS.md)
 - [TODO.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/TODO.md)
