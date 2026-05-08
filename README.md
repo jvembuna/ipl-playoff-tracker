@@ -4,6 +4,10 @@
 
 This is a small Flask web app that estimates IPL 2026 playoff qualification chances with a Monte Carlo simulation.
 
+You can look at the current playoff qualification chances here:
+
+- [Live App](https://cbhejmuprq.us-west-2.awsapprunner.com/)
+
 The app currently uses manually maintained JSON fixtures for:
 
 - the latest standings snapshot
@@ -103,4 +107,3 @@ The production container:
 - [ARCHITECTURE.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/ARCHITECTURE.md)
 - [MONTE_CARLO.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/MONTE_CARLO.md)
 - [AGENTS.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/AGENTS.md)
-- [TODO.md](/Users/janardhanan/Desktop/learning/codex-drills/ipl/TODO.md)
