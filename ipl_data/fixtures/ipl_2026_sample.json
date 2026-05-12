@@ -1,14 +1,14 @@
 {
   "source_name": "manual_seed",
-  "refreshed_at": "2026-05-11",
+  "refreshed_at": "2026-05-12",
   "notes": [
     "This is a manually seeded IPL 2026 standings and remaining fixtures snapshot.",
     "Refresh is intentionally disabled in this version; update this file manually as results come in."
   ],
   "standings": [
+    {"team_id": "GT", "team_name": "GT", "played": 12, "won": 8, "lost": 4, "no_result": 0, "points": 16, "net_run_rate": 0.551},
     {"team_id": "RCB", "team_name": "RCB", "played": 11, "won": 7, "lost": 4, "no_result": 0, "points": 14, "net_run_rate": 1.103},
-    {"team_id": "SRH", "team_name": "SRH", "played": 11, "won": 7, "lost": 4, "no_result": 0, "points": 14, "net_run_rate": 0.737},
-    {"team_id": "GT", "team_name": "GT", "played": 11, "won": 7, "lost": 4, "no_result": 0, "points": 14, "net_run_rate": 0.228},
+    {"team_id": "SRH", "team_name": "SRH", "played": 12, "won": 7, "lost": 5, "no_result": 0, "points": 14, "net_run_rate": 0.331},
     {"team_id": "PBKS", "team_name": "PBKS", "played": 11, "won": 6, "lost": 4, "no_result": 1, "points": 13, "net_run_rate": 0.428},
     {"team_id": "CSK", "team_name": "CSK", "played": 11, "won": 6, "lost": 5, "no_result": 0, "points": 12, "net_run_rate": 0.185},
     {"team_id": "RR", "team_name": "RR", "played": 11, "won": 6, "lost": 5, "no_result": 0, "points": 12, "net_run_rate": 0.082},
@@ -18,7 +18,6 @@
     {"team_id": "LSG", "team_name": "LSG", "played": 11, "won": 3, "lost": 8, "no_result": 0, "points": 6, "net_run_rate": -0.907}
   ],
   "remaining_matches": [
-    {"match_id": "match_056", "team_a": "GT", "team_b": "SRH"},
     {"match_id": "match_057", "team_a": "RCB", "team_b": "KKR"},
     {"match_id": "match_058", "team_a": "PBKS", "team_b": "MI"},
     {"match_id": "match_059", "team_a": "LSG", "team_b": "CSK"},

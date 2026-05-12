@@ -12,6 +12,7 @@
     {"date": "2026-05-08", "simulation_count": 10000, "qualification_percentages": {"SRH": 86.5, "PBKS": 82.0, "RCB": 74.0, "RR": 66.5, "GT": 53.3, "CSK": 24.6, "KKR": 12.8, "DC": 0.0, "MI": 0.1, "LSG": 0.1}},
     {"date": "2026-05-09", "simulation_count": 10000, "qualification_percentages": {"SRH": 88.2, "GT": 74.0, "PBKS": 81.8, "RCB": 75.7, "RR": 37.5, "CSK": 29.4, "KKR": 13.2, "DC": 0.0, "MI": 0.1, "LSG": 0.1}},
     {"date": "2026-05-10", "simulation_count": 10000, "qualification_percentages": {"RCB": 87.9, "SRH": 86.0, "GT": 68.0, "PBKS": 77.9, "CSK": 41.7, "RR": 29.8, "KKR": 8.7, "DC": 0.0, "MI": 0.0, "LSG": 0.0}},
-    {"date": "2026-05-11", "simulation_count": 10000, "qualification_percentages": {"RCB": 89.1, "SRH": 86.5, "GT": 70.9, "PBKS": 64.1, "CSK": 44.9, "RR": 34.9, "DC": 0.1, "KKR": 9.6, "MI": 0.0, "LSG": 0.0}}
+    {"date": "2026-05-11", "simulation_count": 10000, "qualification_percentages": {"RCB": 89.1, "SRH": 86.5, "GT": 70.9, "PBKS": 64.1, "CSK": 44.9, "RR": 34.9, "DC": 0.1, "KKR": 9.6, "MI": 0.0, "LSG": 0.0}},
+    {"date": "2026-05-12", "simulation_count": 10000, "qualification_percentages": {"GT": 97.2, "RCB": 88.5, "SRH": 70.6, "PBKS": 64.5, "CSK": 40.7, "RR": 28.9, "DC": 0.0, "KKR": 9.6, "MI": 0.0, "LSG": 0.0}}
   ]
 }
