@@ -115,9 +115,14 @@ function renderStandings() {
   });
 
   standingsBody.innerHTML = standings
-    .map((row) => {
+    .map((row, index) => {
       const chance = currentQualification(row.team_id);
-      const rowClass = chance === 0 ? "is-eliminated" : "";
+      let rowClass = "";
+      if (chance === 0) {
+        rowClass = "is-eliminated";
+      } else if (chance === 100 && index < 4) {
+        rowClass = "is-clinched";
+      }
       return `
         <tr class="${rowClass}">
           <td>

@@ -234,6 +234,10 @@ tbody tr.is-eliminated td {
   background: rgba(186, 63, 63, 0.08);
 }
 
+tbody tr.is-clinched td {
+  background: rgba(29, 107, 68, 0.10);
+}
+
 .team-cell {
   display: flex;
   align-items: center;
