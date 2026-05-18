@@ -1,6 +1,6 @@
 {
   "source_name": "manual_seed",
-  "refreshed_at": "2026-05-17",
+  "refreshed_at": "2026-05-18",
   "notes": [
     "This is a manually seeded IPL 2026 standings and remaining fixtures snapshot.",
     "Refresh is intentionally disabled in this version; update this file manually as results come in."
@@ -8,17 +8,16 @@
   "standings": [
     {"team_id": "RCB", "team_name": "RCB", "played": 13, "won": 9, "lost": 4, "no_result": 0, "points": 18, "net_run_rate": 1.065},
     {"team_id": "GT", "team_name": "GT", "played": 13, "won": 8, "lost": 5, "no_result": 0, "points": 16, "net_run_rate": 0.400},
-    {"team_id": "SRH", "team_name": "SRH", "played": 12, "won": 7, "lost": 5, "no_result": 0, "points": 14, "net_run_rate": 0.331},
+    {"team_id": "SRH", "team_name": "SRH", "played": 13, "won": 8, "lost": 5, "no_result": 0, "points": 16, "net_run_rate": 0.350},
     {"team_id": "PBKS", "team_name": "PBKS", "played": 13, "won": 6, "lost": 6, "no_result": 1, "points": 13, "net_run_rate": 0.227},
     {"team_id": "RR", "team_name": "RR", "played": 12, "won": 6, "lost": 6, "no_result": 0, "points": 12, "net_run_rate": 0.027},
-    {"team_id": "CSK", "team_name": "CSK", "played": 12, "won": 6, "lost": 6, "no_result": 0, "points": 12, "net_run_rate": 0.027},
+    {"team_id": "CSK", "team_name": "CSK", "played": 13, "won": 6, "lost": 7, "no_result": 0, "points": 12, "net_run_rate": -0.016},
     {"team_id": "DC", "team_name": "DC", "played": 13, "won": 6, "lost": 7, "no_result": 0, "points": 12, "net_run_rate": -0.871},
     {"team_id": "KKR", "team_name": "KKR", "played": 12, "won": 5, "lost": 6, "no_result": 1, "points": 11, "net_run_rate": -0.038},
     {"team_id": "MI", "team_name": "MI", "played": 12, "won": 4, "lost": 8, "no_result": 0, "points": 8, "net_run_rate": -0.504},
     {"team_id": "LSG", "team_name": "LSG", "played": 12, "won": 4, "lost": 8, "no_result": 0, "points": 8, "net_run_rate": -0.701}
   ],
   "remaining_matches": [
-    {"match_id": "match_063", "team_a": "CSK", "team_b": "SRH"},
     {"match_id": "match_064", "team_a": "RR", "team_b": "LSG"},
     {"match_id": "match_065", "team_a": "KKR", "team_b": "MI"},
     {"match_id": "match_066", "team_a": "GT", "team_b": "CSK"},
